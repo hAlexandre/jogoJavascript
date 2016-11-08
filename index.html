@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<html>
+<body>
+
+
+<canvas id="canvas" width="800" height="600" style="border:1px solid #d3d3d3;"> Your browser does not support the HTML5 canvas tag.</canvas>
+<h4>Alexandre Azevedo Oliveira</h4>
+
+<script src="game.js"></script>
+
+<script>
+
+
+    Game.initialize();
+
+    Game.run = (function() {
+        var loops = 0, skipTicks = 1000 / Game.fps,
+        maxFrameSkip = 10,
+        nextGameTick = (new Date).getTime();
+
+        return function() {
+            loops = 0;
+
+            while ((new Date).getTime() > nextGameTick) {
+                Game.update();
+                nextGameTick += skipTicks;
+                loops++;                
+            }
+            Game.draw();
+        };
+    })();
+
+
+    document.querySelector('body').addEventListener("click", function(event) {        
+        var x = event.clientX - 8;
+        var y = event.clientY - 8;    
+        var dist = Math.sqrt( Math.pow(x-375,2) + Math.pow(y-335,2));
+        if(dist<=73)
+            Game.restart();
+
+    });
+
+
+    document.querySelector('body').addEventListener('keydown', function(event) {
+        var tecla = event.keyCode;
+        //esquerda = 37 direita = 39
+
+        if(tecla == 37)          
+            this.car_x = 5; 
+                     
+        else if(tecla == 39)
+                this.car_x = 5;
+        Game.carMove(tecla);
+        
+    });
+
+    (function() {
+        var onEachFrame;
+        if (window.webkitRequestAnimationFrame) {
+            onEachFrame = function(cb) {
+                var _cb = function() { cb(); webkitRequestAnimationFrame(_cb); }
+                _cb();
+            };
+        }
+        else if (window.mozRequestAnimationFrame) {
+                onEachFrame = function(cb) {
+                var _cb = function() { cb(); mozRequestAnimationFrame(_cb); }
+                _cb();
+            };
+        }
+        else {
+            onEachFrame = function(cb) {
+                setInterval(cb, 1000 / 60);
+            }
+        }
+
+        window.onEachFrame = onEachFrame;
+    })();
+
+
+    
+
+    window.onEachFrame(Game.run);
+  </script>
+
+
+</body>
+</html>
